@@ -27,6 +27,11 @@ Having some experience in using `jest` to test react components, I've decided to
     npm run deploy
     ```
 
+
+4. **Visit the service endpoint**
+
+    Go to the API endpoint with the path `/comments/1`
+
 3. **Tests**
 
     Additionally you can run the tests by typing:
