@@ -15,16 +15,22 @@ Having some experience in using `jest` to test react components, I've decided to
 
     To set up the `node_modules`, first run:
 
-    ```npm install```
+    ```bash
+    npm install
+    ```
 
 2. **Deploy**
 
     To deploy the service run:
 
-    ```npm run deploy```
+    ```bash
+    npm run deploy
+    ```
 
 3. **Tests**
 
     Additionally you can run the tests by typing:
 
-    ```npm test```
+    ```bash
+    npm test
+    ```
