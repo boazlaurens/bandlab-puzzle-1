@@ -1,0 +1,66 @@
+service: bandlab-puzzle-1
+
+plugins:
+- serverless-plugin-include-dependencies
+
+custom:
+  bucket: bandlab-dev-inbox
+  sns:
+    save:
+      topicName: bandlab-dev-save
+      ref:
+        Fn::Join:
+          - ":"
+          - - arn:aws:sns
+            - Ref: AWS::Region
+            - Ref: AWS::AccountId
+            - ${self:custom.sns.save.topicName}
+
+package:
+  exclude:
+    - __test__/**
+    - coverage/**
+    - functions/**
+    - .eslintrc
+    - .npmignore
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+  environment:
+    BUCKET: ${self:custom.bucket}
+    SNS_ARN: ${self:custom.sns.save.ref}
+  iamRoleStatements:
+  - Effect: Allow
+    Action:
+    - s3:getObject
+    - s3:putObject
+    Resource:
+    - arn:aws:s3:::${self:custom.bucket}/*
+  - Effect: Allow
+    Action:
+    - sns:publish
+    Resource:
+    - ${self:custom.sns.save.ref}
+    
+functions:
+  getComment:
+    handler: build/functions/comments.getComment
+    events:
+    - http:
+        path: comments/{commentId}
+        method: GET
+
+  commentParser:
+    handler: build/functions/comments.commentParser
+    events:
+    - s3:
+        bucket: ${self:custom.bucket}
+        event: s3:ObjectCreated:*
+        rules:
+        - prefix: comments/
+
+  commentSaver:
+    handler: build/functions/comments.commentSaver
+    events:
+    - sns: ${self:custom.sns.save.topicName}
